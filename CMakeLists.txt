@@ -13,7 +13,9 @@ target_sources(i0bz_templatic_library
                 PUBLIC
                 FILE_SET CXX_MODULES
                 FILES
-                    src/itl-linked_list.cppm)
+                    src/itl.cppm
+                    src/itl-linked_list.cppm
+                    src/itl-constants.cppm)
 
 add_executable(test2 test.cpp)
 
