@@ -7,7 +7,8 @@ module;
 
 export module iobz_containers:linked_list;
 import :constants;
-namespace {
+namespace 
+{
     inline constexpr std::size_t DEFAULT_LIST_NODE_SIZE = 4;
 }
 
@@ -78,6 +79,7 @@ namespace itl
     public:
 
         std::size_t size() const { return list_usage; }
+        bool empty() const { return !list_usage; }
 
         T& operator[](std::size_t index)
         {
