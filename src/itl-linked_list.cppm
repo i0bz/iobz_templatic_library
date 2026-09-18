@@ -2,6 +2,7 @@ module;
 #include <algorithm>
 #include <concepts>
 #include <cstddef>
+#include <initializer_list>
 #include <stdexcept>
 
 
@@ -77,6 +78,25 @@ namespace itl
         }
 
     public:
+
+        linked_list() {};
+        
+        linked_list(const std::initializer_list<T>& list)
+        {
+            std::ranges::for_each(list, [this](const T& x) { push_back(x); });
+        }
+
+        ~linked_list()
+        {
+            while (head)
+            {
+                auto temp = head;
+                head = head->next;
+                delete temp;
+            }
+        }
+
+
 
         std::size_t size() const { return list_usage; }
         bool empty() const { return !list_usage; }
