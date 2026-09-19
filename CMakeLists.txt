@@ -16,7 +16,7 @@ target_sources(i0bz_templatic_library
                 src/itl.cppm
                     src/itl-iterator.cppm
                     src/itl-stack.cppm
-                    src/itl-linked_list.cppm
+                    src/itl-list.cppm
                     src/itl-constants.cppm)
 
 add_executable(test2 test.cpp)
