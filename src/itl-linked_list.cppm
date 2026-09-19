@@ -8,6 +8,7 @@ module;
 
 export module iobz_containers:list;
 import :constants;
+import :iterator;
 namespace 
 {
     inline constexpr std::size_t DEFAULT_LIST_NODE_SIZE = 4;
@@ -19,6 +20,14 @@ namespace itl
     export template<std::copyable T, std::size_t N = DEFAULT_LIST_NODE_SIZE>
     class list
     {
+    public:
+        template<typename U>
+        struct list_iterator;
+        using iterator = list_iterator<T>;
+        using const_iterator = list_iterator<const T>;
+    
+    private:
+
         struct Node
         {
             T data[N];
@@ -39,15 +48,11 @@ namespace itl
             head = tail = new Node({object}, 1 );
             list_usage++;
         }
-        
-
-    
         void _stitch(Node* node_1, Node* node_2)
         {
             node_1->next = node_2;
             node_2->prev = node_1;
         }
-
         void _balance(Node* node)
         {
             if (node->node_usage >= (N / 4)) return;
@@ -77,6 +82,8 @@ namespace itl
 
         }
 
+
+
     public:
 
         list() {};
@@ -85,7 +92,7 @@ namespace itl
         {
             std::ranges::for_each(init, [this](const T& x) { push_back(x); });
         }
-
+        
         list(const list& other)
         {
             std::ranges::for_each(other, [this](const T& x) { push_back(x); });
@@ -101,11 +108,34 @@ namespace itl
             }
         }
 
-
-
         std::size_t size() const { return list_usage; }
         
         bool empty() const { return !list_usage; }
+
+        iterator begin() 
+        { 
+            if (!head) return iterator(nullptr, nullptr);
+
+            return  iterator(head->data, head);
+        }
+
+        iterator end()
+        {
+            return iterator(nullptr, nullptr);
+        }
+
+        const_iterator cbegin() const
+        { 
+            if (!head) return iterator(nullptr, nullptr);
+
+            return  iterator(head->data, head);
+        }
+
+        const_iterator cend() const
+        {
+            return iterator(nullptr, nullptr);
+        }
+
 
         T& operator[](std::size_t index)
         {
@@ -295,8 +325,104 @@ namespace itl
             list_usage++;
 
         }
-
+        
     };
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    template <std::copyable T, std::size_t N>
+    template<typename U>
+    struct list<T,N>::list_iterator : base_iterator<U, list_iterator<U>>
+    {
+        U* element;
+        Node* residence_node;
+        
+        list_iterator() {}
+        list_iterator(U* ptr, Node* node) : element(ptr), residence_node(node) {}
+        list_iterator(const list_iterator& other) : element(other.element), residence_node(other.residence_node) {}
+
+
+        list_iterator& operator++() override
+        {
+            if (++element >= residence_node->data + residence_node->node_usage)
+            {
+                residence_node = residence_node->next;
+                if (!residence_node)
+                {
+                    element = nullptr;
+                } 
+                else
+                {
+                    element = residence_node->data;
+                }
+            }
+            return *this;
+        }
+        
+        list_iterator operator++(int) override
+        {
+            list_iterator temp = *this;
+            ++(*this);
+            return temp;
+        }
+
+        list_iterator& operator--() override
+        {
+            if (--element < residence_node->data)
+            {
+                residence_node = residence_node->prev;
+                if (!residence_node)
+                {
+                    element = nullptr;
+                } 
+                else
+                {
+                    element = residence_node->data + residence_node->node_usage - 1;
+                }
+            }
+            return *this;
+        }
+        
+        list_iterator operator--(int) override
+        {
+            list_iterator temp = *this;
+            --(*this);
+            return temp;
+        }
+        
+        base_iterator<U, list_iterator>::reference operator*() const override
+        {
+            return *element;
+        }
+
+        base_iterator<U, list_iterator>::pointer operator->() const override
+        {
+            return element;
+        }
+        
+        bool operator==(const list_iterator& other) const override
+        {
+            return element == other.element;
+        }
+        
+        bool operator!=(const list_iterator& other) const override
+        {
+            return element != other.element;
+        }
+    };
 }
