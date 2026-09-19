@@ -5,7 +5,7 @@ module;
 
 export module iobz_containers:stack;
 import :constants;
-import :linked_list;
+import :list;
 
 
 namespace 
@@ -100,7 +100,7 @@ namespace itl
     export template<std::copyable T>
     class stack<T, 0>
     {
-        linked_list<T, cacheline_aligned_size(sizeof(T))> stack_list;
+        list<T, cacheline_aligned_size(sizeof(T))> stack_list;
 
 
 

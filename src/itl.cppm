@@ -1,9 +1,9 @@
 export module iobz_containers;
 export import :stack;
-export import :linked_list;
+export import :list;
 
 
-namespace itl
+export namespace itl
 {
 
 }
