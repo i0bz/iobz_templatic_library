@@ -3,7 +3,6 @@ module;
 #include <concepts>
 #include <cstddef>
 #include <initializer_list>
-#include <iterator>
 #include <stdexcept>
 
 
@@ -82,7 +81,6 @@ namespace itl
             }
 
         }
-
 
 
     public:
@@ -328,23 +326,6 @@ namespace itl
         }
         
     };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     template <std::copyable T, std::size_t N>
     template<typename U>
