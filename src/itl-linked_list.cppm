@@ -6,7 +6,7 @@ module;
 #include <stdexcept>
 
 
-export module iobz_containers:linked_list;
+export module iobz_containers:list;
 import :constants;
 namespace 
 {
@@ -17,7 +17,7 @@ namespace itl
 {
 
     export template<std::copyable T, std::size_t N = DEFAULT_LIST_NODE_SIZE>
-    class linked_list
+    class list
     {
         struct Node
         {
@@ -79,14 +79,19 @@ namespace itl
 
     public:
 
-        linked_list() {};
+        list() {};
         
-        linked_list(const std::initializer_list<T>& list)
+        list(const std::initializer_list<T>& init)
         {
-            std::ranges::for_each(list, [this](const T& x) { push_back(x); });
+            std::ranges::for_each(init, [this](const T& x) { push_back(x); });
         }
 
-        ~linked_list()
+        list(const list& other)
+        {
+            std::ranges::for_each(other, [this](const T& x) { push_back(x); });
+        }
+
+        ~list()
         {
             while (head)
             {
@@ -99,6 +104,7 @@ namespace itl
 
 
         std::size_t size() const { return list_usage; }
+        
         bool empty() const { return !list_usage; }
 
         T& operator[](std::size_t index)
