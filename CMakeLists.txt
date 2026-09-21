@@ -13,9 +13,10 @@ target_sources(i0bz_templatic_library
                 PUBLIC
                 FILE_SET CXX_MODULES
                 FILES
-                src/itl.cppm
+                    src/itl.cppm
                     src/itl-iterator.cppm
                     src/itl-stack.cppm
+                    src/itl-rbtree.cppm
                     src/itl-list.cppm
                     src/itl-constants.cppm)
 
