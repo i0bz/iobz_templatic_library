@@ -87,18 +87,13 @@ namespace itl
 
     public:
 
-        list() {};
+        list() {}
         
         list(std::initializer_list<T> init)
         {
             std::ranges::for_each(init, [this](const T& x) { push_back(x); });
         }
         
-        list(const list& other)
-        {
-            std::ranges::for_each(other, [this](const T& x) { push_back(x); });
-        }
-
         ~list()
         {
             while (head)
