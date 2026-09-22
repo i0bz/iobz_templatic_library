@@ -25,7 +25,6 @@ namespace itl
         }
 
         bool empty() { return tree.empty(); }
-        std::size_t size() { return tree.size(); }
 
         bool insert(const K& key, const V& value)
         {
