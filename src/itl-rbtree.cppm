@@ -1,9 +1,11 @@
 module;
 #include <concepts>
+#include <stdexcept>
 #include <utility>
 
 
 export module iobz_containers:rbtree;
+import :constants;
 
 //TODO add red black properties and balancing later you lazy fuck 
 
@@ -11,7 +13,7 @@ export module iobz_containers:rbtree;
 namespace itl
 {
     
-    template <std::copyable K, std::copyable T>
+    export template <std::copyable K, std::copyable T>
     class rbtree
     {
         enum class Direction;
@@ -116,7 +118,21 @@ namespace itl
             
             root = nullptr;
         }
+
+        T& at(const K& key)
+        {
+            auto ptrs = _search(key);
+            if (!ptrs.first) throw std::out_of_range(OOB_ERR.data());
+            return ptrs.first->value;
+        }
         
+
+        T& operator[](const K& key)
+        {
+            auto res = insert(key, T());
+            return res.first->value;
+        }
+
         std::pair<Node*, bool> insert(const K& key, const T& obj)
         {
             if (!root)
