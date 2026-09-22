@@ -89,7 +89,7 @@ namespace itl
 
         list() {};
         
-        list(const std::initializer_list<T>& init)
+        list(std::initializer_list<T> init)
         {
             std::ranges::for_each(init, [this](const T& x) { push_back(x); });
         }
