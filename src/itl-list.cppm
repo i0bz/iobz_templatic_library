@@ -3,6 +3,7 @@ module;
 #include <concepts>
 #include <cstddef>
 #include <initializer_list>
+#include <iterator>
 #include <stdexcept>
 
 
@@ -25,6 +26,7 @@ namespace itl
         struct list_iterator;
         using iterator = list_iterator<T>;
         using const_iterator = list_iterator<const T>;
+        using reverse_iterator = std::reverse_iterator<iterator>;
     
     private:
 
@@ -108,8 +110,8 @@ namespace itl
         }
 
         std::size_t size() const { return list_usage; }
-        
         bool empty() const { return !list_usage; }
+
 
         iterator begin() 
         { 
@@ -120,7 +122,7 @@ namespace itl
 
         iterator end()
         {
-            return iterator(nullptr, nullptr);
+            return iterator(&tail->data[tail->node_usage], tail);
         }
 
         const_iterator cbegin() const
@@ -132,8 +134,19 @@ namespace itl
 
         const_iterator cend() const
         {
-            return const_iterator(nullptr, nullptr);
+            return const_iterator(&tail->data[tail->node_usage], tail);
         }
+
+        reverse_iterator rbegin()
+        {
+            return reverse_iterator(end());
+        }
+
+        reverse_iterator rend()
+        {
+            return reverse_iterator(begin());
+        }
+        
 
 
         T& operator[](std::size_t index)
@@ -333,14 +346,23 @@ namespace itl
     {
         U* element;
         Node* residence_node;
+        std::pair<U*,Node*> prev_item;
         
         list_iterator() {}
+
         list_iterator(U* ptr, Node* node) : element(ptr), residence_node(node) {}
+
+        // list_iterator(U* ptr, Node* node, U* prev_ptr, Node* prev_res) : element(ptr), residence_node(node), prev_item(prev_ptr, prev_res) {}
+        
         list_iterator(const list_iterator& other) : element(other.element), residence_node(other.residence_node) {}
 
 
         list_iterator& operator++() override
         {
+
+            // prev_item.first = element;
+            // prev_item.second = residence_node;
+
             if (++element >= residence_node->data + residence_node->node_usage)
             {
                 residence_node = residence_node->next;
@@ -365,6 +387,13 @@ namespace itl
 
         list_iterator& operator--() override
         {
+            // if (!element && prev_item.first)
+            // {
+            //     element = prev_item.first;
+            //     residence_node = prev_item.second;
+            //     return *this;
+            // }
+
             if (--element < residence_node->data)
             {
                 residence_node = residence_node->prev;
