@@ -1,5 +1,6 @@
 module;
 #include <concepts>
+#include <cstddef>
 #include <stdexcept>
 #include <utility>
 
@@ -36,6 +37,9 @@ namespace itl
         };
 
         Node* root{};
+        std::size_t usage{};
+
+
 
         inline Node* _child(Node* node, Direction d)
         {
@@ -97,6 +101,9 @@ namespace itl
             clear();
         }
 
+        bool empty() { return !usage; }
+        std::size_t size() { return usage; }
+
         void clear()
         {
             Node* temp_1{root};
@@ -117,6 +124,7 @@ namespace itl
             }
             
             root = nullptr;
+            usage = 0;
         }
 
         T& at(const K& key)
@@ -138,6 +146,7 @@ namespace itl
             if (!root)
             {
                 root = new Node(key, obj, nullptr);
+                ++usage;
                 return std::pair(root, true);
             }
 
@@ -147,6 +156,7 @@ namespace itl
             {
                 auto location = key > search_ptrs.second->key;
                 search_ptrs.second->children[location] = new Node(key, obj, search_ptrs.second);
+                ++usage;
                 return std::pair(search_ptrs.second->children[location], true);
             }
 
@@ -188,6 +198,7 @@ namespace itl
             {
                 root = replacement_child;
                 delete search_ptrs.first;
+                --usage;
                 return true;
             }
 
@@ -201,6 +212,7 @@ namespace itl
             }
             delete search_ptrs.first;
             
+            --usage;
             return true;
         }
     };
