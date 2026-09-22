@@ -14,6 +14,7 @@ target_sources(i0bz_templatic_library
                 FILE_SET CXX_MODULES
                 FILES
                     src/itl.cppm
+                    src/itl-set.cppm
                     src/itl-map.cppm
                     src/itl-iterator.cppm
                     src/itl-stack.cppm
