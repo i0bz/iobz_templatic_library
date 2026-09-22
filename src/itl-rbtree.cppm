@@ -9,6 +9,7 @@ export module iobz_containers:rbtree;
 import :constants;
 
 //TODO add red black properties and balancing later you lazy fuck 
+//TODO: also create an inorder iterator for this you lazy fuck!
 
 
 namespace itl
