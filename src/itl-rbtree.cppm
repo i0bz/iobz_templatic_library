@@ -18,7 +18,18 @@ namespace itl
     export template <std::copyable K, std::copyable T>
     class rbtree
     {
-        enum class Direction;
+        enum class Color
+        {
+            BLACK, RED
+        };
+        static constexpr Color RED = Color::RED;
+        static constexpr Color BLACK = Color::BLACK;
+
+
+        enum class Direction
+        {
+            LEFT, RIGHT
+        };
         static constexpr Direction LEFT = Direction::LEFT;
         static constexpr Direction RIGHT = Direction::RIGHT;
 
@@ -33,6 +44,7 @@ namespace itl
             T value;
             Node* children[2];
             Node* parent{};
+            Color col{RED};
 
             Node(K ky, T vl, Node* pr) : key(ky), value(vl), parent(pr) {}
         };
@@ -40,7 +52,111 @@ namespace itl
         Node* root{};
         std::size_t usage{};
 
+        Node* _rotate(Node* node, Direction d)
+        {
+            Node* parent = node->parent;
+            Node* replacing_node = node->children[!to_id(d)];
+            replacing_node->parent = parent;
 
+            node->children[!to_id(d)] = replacing_node->children[to_id(d)];
+            if (node->children[!to_id(d)])
+            {
+                node->children[!to_id(d)]->parent = node;
+            }
+            node->parent = replacing_node;
+            replacing_node->children[to_id(d)] =  node;
+            
+            if (!parent)
+            {
+                root = replacing_node;
+                return root;
+            }
+            if (parent->children[to_id(RIGHT)] == node)
+            {
+                parent->children[to_id(RIGHT)] = replacing_node;
+            }
+            else 
+            {
+                parent->children[to_id(LEFT)] = replacing_node;
+            }
+
+            return replacing_node;
+        }
+
+
+        //makapabagtit etoy nga part ti parparbangon yt
+        //putangina 30 mins debugging hell eto
+        //nakalimutan lang na recolor grandparent sa red uncle case 
+        void _insertion_fix(Node* node)
+        {
+            while(node)
+            {
+                Node* parent{node->parent};
+
+                //Root Case
+                if(!parent)
+                {
+                    node->col = BLACK;
+                    return;
+                }
+
+                //No Red Red conlict
+                if (parent->col == BLACK)
+                {
+                    return;
+                }
+
+                Node* grandparent{parent->parent};
+
+                //Parent is root
+                if (!grandparent)
+                {
+                    parent->col = BLACK;
+                    return;
+                }
+
+                int uncle_location{};
+                Node* uncle = [&]()
+                {
+                    if (grandparent->children[to_id(RIGHT)] == parent)
+                    {
+                        uncle_location = to_id(LEFT);
+                        return grandparent->children[to_id(LEFT)];
+                    }
+                    else 
+                    {
+                        uncle_location = to_id(RIGHT);
+                        return grandparent->children[to_id(RIGHT)];
+                    }
+                }();
+
+                
+                //Red Uncle
+                if (uncle && uncle->col == RED)
+                {
+                    uncle->col = BLACK;
+                    parent->col = BLACK;
+                    grandparent->col = RED;
+                    node = grandparent;
+                    continue;
+                }
+
+
+                int node_location = (parent->children[to_id(RIGHT)] == node) ? to_id(RIGHT) : to_id(LEFT);
+                
+
+                //ZigZag
+                if (node_location == uncle_location)
+                {
+                    parent = _rotate(parent, static_cast<Direction>(!node_location));
+                }
+                
+                //Straight ako, kasi crush ko si Dennise
+                parent->col = BLACK;
+                grandparent->col = RED;
+                _rotate(grandparent,  static_cast<Direction>(uncle_location));
+            }
+        }
 
         inline Node* _child(Node* node, Direction d)
         {
@@ -157,9 +273,11 @@ namespace itl
             {
                 auto location = key > search_ptrs.second->key;
                 search_ptrs.second->children[location] = new Node(key, obj, search_ptrs.second);
+                _insertion_fix(search_ptrs.second->children[location]);
                 ++usage;
                 return std::pair(search_ptrs.second->children[location], true);
             }
+
 
             return std::pair(search_ptrs.first, false);
         }
@@ -216,15 +334,6 @@ namespace itl
             --usage;
             return true;
         }
-    };
-
-
-
-    template<std::copyable K, std::copyable T>
-    enum class rbtree<K, T>::Direction
-    {
-        LEFT,
-        RIGHT
     };
 
 }
