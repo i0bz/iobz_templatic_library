@@ -6,15 +6,7 @@ module;
 
 export module iobz_containers:set;
 import :rbtree;
-
-template<typename T>
-concept Hashable = requires(T type)
-{
-    { std::hash<T>{}(type) } -> std::convertible_to<std::size_t>;
-};
-
-template<typename T>
-concept CopyAndHashable = Hashable<T> && std::copyable<T>;
+import :constants;
 
 namespace itl
 {
