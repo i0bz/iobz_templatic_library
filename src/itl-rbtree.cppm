@@ -158,6 +158,73 @@ namespace itl
             }
         }
 
+        void _deletion_fix(Node* node, Node* parent)
+        {
+            auto is_black = [](Node* n)
+            {
+                return !n || n->col == BLACK;
+            };
+
+            while (true)
+            {
+                if (!parent || !is_black(node))
+                {
+                    if (node)
+                    {
+                        node->col = BLACK;
+                    }
+                    return;
+                }
+
+
+                int node_location = (parent->children[to_id(RIGHT)] == node) ? to_id(RIGHT) : to_id(LEFT);
+                
+                Node* sibling = parent->children[!node_location];
+
+                if (!is_black(sibling))
+                {
+                    parent->col = RED;
+                    sibling->col = BLACK;
+                    _rotate(parent, static_cast<Direction>(node_location));
+                    sibling = parent->children[!node_location];
+                }
+
+                Node* sibling_far_child = sibling ? sibling->children[!node_location] : nullptr;
+                Node* sibling_near_child = sibling ? sibling->children[node_location] : nullptr;
+
+                if (is_black(sibling_far_child))
+                {
+                    if (is_black(sibling_near_child))
+                    {
+                        sibling->col = RED;
+                        node = parent;
+                        parent = node->parent;
+                        continue;
+                    }
+
+                    sibling->col = RED;
+                    if (sibling_near_child) 
+                    {
+                        sibling_near_child->col = BLACK;
+                    }    
+                    _rotate(sibling, static_cast<Direction>(!node_location));
+                    
+                    sibling = parent->children[!node_location];
+                    sibling_far_child = sibling->children[!node_location];
+                }
+
+                sibling->col = parent->col;
+                parent->col = BLACK;
+                if (sibling_far_child)
+                {
+                    sibling_far_child->col = BLACK;
+                }
+                _rotate(parent, static_cast<Direction>(node_location));
+
+                return;
+            }
+        }
+
         inline Node* _child(Node* node, Direction d)
         {
             if (!node) return nullptr;
@@ -329,7 +396,13 @@ namespace itl
             {
                 search_ptrs.second->children[to_id(RIGHT)] = replacement_child;
             }
+            auto replaced_node_col = search_ptrs.first->col;
             delete search_ptrs.first;
+
+            if (replaced_node_col == BLACK)
+            {
+                _deletion_fix(replacement_child, search_ptrs.second);
+            }
             
             --usage;
             return true;
