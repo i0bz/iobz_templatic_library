@@ -20,6 +20,9 @@ target_sources(i0bz_templatic_library
                     src/itl-stack.cppm
                     src/itl-rbtree.cppm
                     src/itl-list.cppm
+                    src/itl-deque.cppm
+                    src/itl-unordered_map.cppm
+                    src/itl-unordered_set.cppm
                     src/itl-constants.cppm)
 
 add_executable(test2 test.cpp)
