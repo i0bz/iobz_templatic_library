@@ -21,12 +21,61 @@ namespace itl
     export template<std::copyable T, std::size_t N = DEFAULT_LIST_NODE_SIZE>
     class list
     {
+
+
+
+    //iterators    
     public:
         template<typename U>
         struct list_iterator;
         using iterator = list_iterator<T>;
         using const_iterator = list_iterator<const T>;
         using reverse_iterator = std::reverse_iterator<iterator>;
+
+
+        iterator begin() 
+        { 
+            if (!head) return iterator();
+
+            return  iterator(head->data, head);
+        }
+
+        iterator end()
+        {
+            if (!tail)
+            {
+                return iterator();
+            }
+            return iterator(&tail->data[tail->node_usage], tail);
+        }
+
+        const_iterator cbegin() const
+        { 
+            if (!head) return const_iterator();
+
+            return  const_iterator(head->data, head);
+        }
+
+        const_iterator cend() const
+        {
+            if (!tail)
+            {
+                return iterator();
+            }
+            return const_iterator(&tail->data[tail->node_usage], tail);
+        }
+
+        reverse_iterator rbegin()
+        {
+            return reverse_iterator(end());
+        }
+
+        reverse_iterator rend()
+        {
+            return reverse_iterator(begin());
+        }
+        
+
     
     private:
 
@@ -106,43 +155,6 @@ namespace itl
 
         std::size_t size() const { return list_usage; }
         bool empty() const { return !list_usage; }
-
-
-        iterator begin() 
-        { 
-            if (!head) return iterator(nullptr, nullptr);
-
-            return  iterator(head->data, head);
-        }
-
-        iterator end()
-        {
-            return iterator(&tail->data[tail->node_usage], tail);
-        }
-
-        const_iterator cbegin() const
-        { 
-            if (!head) return const_iterator(nullptr, nullptr);
-
-            return  const_iterator(head->data, head);
-        }
-
-        const_iterator cend() const
-        {
-            return const_iterator(&tail->data[tail->node_usage], tail);
-        }
-
-        reverse_iterator rbegin()
-        {
-            return reverse_iterator(end());
-        }
-
-        reverse_iterator rend()
-        {
-            return reverse_iterator(begin());
-        }
-        
-
 
         T& operator[](std::size_t index)
         {
@@ -339,24 +351,18 @@ namespace itl
     template<typename U>
     struct list<T,N>::list_iterator : base_iterator<U, list_iterator<U>>
     {
-        U* element;
-        Node* residence_node;
-        std::pair<U*,Node*> prev_item;
+        U* element{nullptr};
+        Node* residence_node{nullptr};
         
         list_iterator() {}
 
         list_iterator(U* ptr, Node* node) : element(ptr), residence_node(node) {}
-
-        // list_iterator(U* ptr, Node* node, U* prev_ptr, Node* prev_res) : element(ptr), residence_node(node), prev_item(prev_ptr, prev_res) {}
         
         list_iterator(const list_iterator& other) : element(other.element), residence_node(other.residence_node) {}
 
 
         list_iterator& operator++() override
         {
-
-            // prev_item.first = element;
-            // prev_item.second = residence_node;
 
             if (++element >= residence_node->data + residence_node->node_usage)
             {
@@ -382,12 +388,6 @@ namespace itl
 
         list_iterator& operator--() override
         {
-            // if (!element && prev_item.first)
-            // {
-            //     element = prev_item.first;
-            //     residence_node = prev_item.second;
-            //     return *this;
-            // }
 
             if (--element < residence_node->data)
             {
@@ -411,12 +411,12 @@ namespace itl
             return temp;
         }
         
-        base_iterator<U, list_iterator>::reference operator*() const override
+        base_iterator<U, list_iterator>::reference operator*() const 
         {
             return *element;
         }
 
-        base_iterator<U, list_iterator>::pointer operator->() const override
+        base_iterator<U, list_iterator>::pointer operator->() const 
         {
             return element;
         }

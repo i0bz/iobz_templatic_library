@@ -45,6 +45,39 @@ namespace itl
         {
             return tree[key];
         }
+
+
+
+        //iterators
+        rbtree<K, V>::iterator begin()
+        {
+            return tree.begin();
+        }
+
+        rbtree<K, V>::iterator end()
+        {
+            return tree.end();
+        }
+
+        rbtree<K, V>::const_iterator cbegin()
+        {
+            return tree.begin();
+        }
+
+        rbtree<K, V>::const_iterator cend()
+        {
+            return tree.end();
+        }
+
+        rbtree<K, V>::reverse_iterator rbegin()
+        {
+            return tree.rbegin();
+        }
+
+        rbtree<K, V>::reverse_iterator rend()
+        {
+            return tree.rend();
+        }
     };
 
 

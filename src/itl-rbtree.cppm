@@ -7,8 +7,8 @@ module;
 
 export module iobz_containers:rbtree;
 import :constants;
+import :iterator;
 
-//TODO add red black properties and balancing later you lazy fuck 
 //TODO: also create an inorder iterator for this you lazy fuck!
 
 
@@ -18,6 +18,99 @@ namespace itl
     export template <std::copyable K, std::copyable T>
     class rbtree
     {
+    public:
+        //now for iterators
+        template<typename U>
+        struct inorder_iterator;
+        using iterator = inorder_iterator<T>;
+        using const_iterator = inorder_iterator<const T>;
+        using reverse_iterator = std::reverse_iterator<iterator>;
+
+        iterator begin()
+        {
+            if (!root)
+            {
+                return iterator();
+            }
+
+            Node* start{root};
+
+            while (start->children[to_id(LEFT)])
+            {
+                start = start->children[to_id(LEFT)];
+            }
+
+            return iterator(start);
+        }
+
+        iterator end()
+        {
+            if (!root)
+            {
+                return iterator();
+            }
+
+            Node* end{root};
+
+            while (end->children[to_id(RIGHT)])
+            {
+                end = end->children[to_id(RIGHT)];
+            }
+
+            return iterator(nullptr, end);
+        }
+
+        const_iterator cbegin()
+        {
+            if (!root)
+            {
+                return const_iterator();
+            }
+
+            Node* start{root};
+
+            while (start->children[to_id(LEFT)])
+            {
+                start = start->children[to_id(LEFT)];
+            }
+
+            return const_iterator(start);
+        }
+
+        const_iterator cend()
+        {
+            if (!root)
+            {
+                return const_iterator();
+            }
+
+            Node* end{root};
+
+            while (end->children[to_id(RIGHT)])
+            {
+                end = end->children[to_id(RIGHT)];
+            }
+
+            return const_iterator(nullptr, end);
+        }
+        
+        reverse_iterator rbegin()
+        {
+            return reverse_iterator(end());
+        }
+
+        reverse_iterator rend()
+        {
+            return reverse_iterator(begin());
+        }
+
+
+
+
+
+    private:
+
+
         enum class Color
         {
             BLACK, RED
@@ -225,7 +318,7 @@ namespace itl
             }
         }
 
-        inline Node* _child(Node* node, Direction d)
+        static inline Node* _child(Node* node, Direction d)
         {
             if (!node) return nullptr;
             return node->children[to_id(d)];
@@ -251,7 +344,7 @@ namespace itl
             return std::pair(first_ptr, second_ptr);
         }
 
-        Node* _inorder_successor(Node* node)
+        static Node* _inorder_successor(Node* node)
         {
             if (!node) return nullptr;
 
@@ -269,6 +362,32 @@ namespace itl
 
             auto* temp{node->parent};
             while (temp && _child(temp, LEFT) != node)
+            {
+                node = temp;
+                temp = temp->parent;
+            }
+
+            return temp;
+        }
+
+        static Node* _inorder_predecessor(Node* node)
+        {
+            if (!node) return nullptr;
+
+            if (_child(node, LEFT))
+            {
+                node = _child(node, LEFT);
+                
+                while (_child(node, RIGHT))
+                {
+                    node = _child(node, RIGHT);
+                }
+
+                return node;
+            }
+
+            auto* temp{node->parent};
+            while (temp && _child(temp, RIGHT) != node)
             {
                 node = temp;
                 temp = temp->parent;
@@ -406,6 +525,73 @@ namespace itl
             
             --usage;
             return true;
+        }
+    };
+
+
+
+
+
+
+    template<std::copyable K, std::copyable T>
+    template<typename U>
+    struct rbtree<K,T>::inorder_iterator : base_iterator<U, inorder_iterator<U>>
+    {
+        Node* element{nullptr};
+        Node* prev_item{nullptr};
+        
+        inorder_iterator() {}
+
+        inorder_iterator(Node* node) : element(node) {}
+        inorder_iterator(Node* node, Node* prev) : element(node), prev_item(prev) {}
+
+        // list_iterator(U* ptr, Node* node, U* prev_ptr, Node* prev_res) : element(ptr), residence_node(node), prev_item(prev_ptr, prev_res) {}
+        
+        inorder_iterator(const inorder_iterator& other) : element(other.element), prev_item(other.prev_item) {}
+
+
+        inorder_iterator& operator++() override
+        {
+
+            prev_item = element;
+            element = rbtree::_inorder_successor(element);
+            return *this;
+        }
+        
+        inorder_iterator operator++(int) override
+        {
+            inorder_iterator temp = *this;
+            ++(*this);
+            return temp;
+        }
+
+        inorder_iterator& operator--() override
+        {
+            element = prev_item;
+            prev_item = rbtree::_inorder_predecessor(prev_item);
+            return *this;
+        }
+        
+        inorder_iterator operator--(int) override
+        {
+            inorder_iterator temp = *this;
+            --(*this);
+            return temp;
+        }
+        
+        K operator*() const
+        {
+            return element->key;
+        }
+        
+        bool operator==(const inorder_iterator& other) const override
+        {
+            return element == other.element;
+        }
+        
+        bool operator!=(const inorder_iterator& other) const override
+        {
+            return element != other.element;
         }
     };
 

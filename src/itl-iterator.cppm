@@ -30,8 +30,6 @@ namespace itl
         virtual Derived& operator--() = 0;
         virtual Derived operator--(int) = 0;
         
-        virtual reference operator*() const = 0;
-        virtual pointer operator->() const = 0;
         
         virtual bool operator==(const Derived&) const = 0;
         virtual bool operator!=(const Derived&) const = 0;
@@ -79,12 +77,12 @@ namespace itl
             return temp;
         }
 
-        base_iterator<T, contiguous_iterator>::reference operator*() const override 
+        base_iterator<T, contiguous_iterator>::reference operator*() const
         {
             return *element;
         }
 
-        base_iterator<T, contiguous_iterator>::pointer operator->() const override
+        base_iterator<T, contiguous_iterator>::pointer operator->() const 
         {
             return element;
         }
