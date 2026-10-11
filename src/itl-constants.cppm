@@ -1,4 +1,5 @@
 module;
+#include <concepts>
 #include <string_view>
 export module iobz_containers:constants;
 
@@ -18,4 +19,7 @@ export namespace itl
 
     template<typename T>
     concept CopyAndHashable = Hashable<T> && std::copyable<T>;
+    
+    template <typename T>
+    concept HashKeyable = std::totally_ordered<T> && CopyAndHashable<T>;
 }
