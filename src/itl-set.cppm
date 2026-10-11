@@ -1,7 +1,6 @@
 module;
 #include <algorithm>
 #include <cstddef>
-#include <functional>
 #include <stdexcept>
 
 export module iobz_containers:set;
@@ -14,8 +13,7 @@ namespace itl
     export template<CopyAndHashable T>
     class set
     {
-        rbtree<std::size_t, T> tree;
-        std::hash<T> hasher;
+        rbtree<T, T, true> tree;
 
 
     public:
@@ -23,7 +21,7 @@ namespace itl
         set(){}
         set(std::initializer_list<T> list)
         {
-            std::ranges::for_each(list,[this](const auto& x){ tree.insert(hasher(x), x); });
+            std::ranges::for_each(list,[this](const auto& x){ tree.insert(x); });
         }
 
         bool empty() { return tree.empty(); }
@@ -37,19 +35,19 @@ namespace itl
         bool insert(const T& object)
         {
 
-            return tree.insert(hasher(object), object).second;
+            return tree.insert(object).second;
         }
 
         bool erase(const T& object)
         {
-            return tree.erase(hasher(object));
+            return tree.erase(object);
         }
 
         bool contains(const T& object)
         {
             try
             {
-                tree.at(hasher(object));
+                tree.at(object);
                 return true;
             }
             catch(const std::out_of_range& e)
@@ -61,45 +59,35 @@ namespace itl
 
 
         //iterators
-        rbtree<std::size_t, T>::iterator begin()
+        rbtree<T, T, true>::iterator begin()
         {
             return tree.begin();
         }
 
-        rbtree<std::size_t, T>::iterator end()
+        rbtree<T, T, true>::iterator end()
         {
             return tree.end();
         }
 
-        rbtree<std::size_t, T>::const_iterator cbegin()
+        rbtree<T, T, true>::const_iterator cbegin()
         {
             return tree.cbegin();
         }
 
-        rbtree<std::size_t, T>::const_iterator cend()
+        rbtree<T, T, true>::const_iterator cend()
         {
             return tree.cend();
         }
 
-        rbtree<std::size_t, T>::reverse_iterator rbegin()
+        rbtree<T, T, true>::reverse_iterator rbegin()
         {
             return tree.rbegin();
         }
 
-        rbtree<std::size_t, T>::reverse_iterator rend()
+        rbtree<T, T, true>::reverse_iterator rend()
         {
             return tree.rend();
         }
 
-
-
-
-
-
     };
-
-
-
-
-
 }
