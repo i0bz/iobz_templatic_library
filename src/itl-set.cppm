@@ -1,5 +1,6 @@
 module;
 #include <algorithm>
+#include <concepts>
 #include <cstddef>
 #include <stdexcept>
 
@@ -10,7 +11,7 @@ import :constants;
 namespace itl
 {
 
-    export template<CopyAndHashable T>
+    export template<std::totally_ordered T>
     class set
     {
         rbtree<T, T, true> tree;
