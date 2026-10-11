@@ -9,7 +9,7 @@ export module iobz_containers:rbtree;
 import :constants;
 import :iterator;
 
-//TODO: also create an inorder iterator for this you lazy fuck!
+//TODO: refactor this to remove the duplicate codes for each specializations
 
 
 namespace itl
