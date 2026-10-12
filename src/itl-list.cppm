@@ -376,11 +376,7 @@ namespace itl
             if (++element >= residence_node->data + residence_node->node_usage)
             {
                 residence_node = residence_node->next;
-                if (!residence_node)
-                {
-                    element = nullptr;
-                } 
-                else
+                if (residence_node)
                 {
                     element = residence_node->data;
                 }
@@ -401,11 +397,7 @@ namespace itl
             if (--element < residence_node->data)
             {
                 residence_node = residence_node->prev;
-                if (!residence_node)
-                {
-                    element = nullptr;
-                } 
-                else
+                if (residence_node)
                 {
                     element = residence_node->data + residence_node->node_usage - 1;
                 }
