@@ -143,6 +143,15 @@ namespace itl
             std::ranges::for_each(init, [this](const T& x) { push_back(x); });
         }
         
+        list(const list& other)
+        {
+            for (auto&& x : other)
+            {
+                this->push_back(x);
+            }
+        }
+
+
         ~list()
         {
             while (head)
