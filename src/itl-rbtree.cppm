@@ -1070,14 +1070,14 @@ namespace itl
         {
             auto ptrs = _search(key);
             if (!ptrs.first) throw std::out_of_range(OOB_ERR.data());
-            return ptrs.first->value;
+            return ptrs.first->key;
         }
         
 
         T& operator[](const K& key)
         {
-            auto res = insert(key, T());
-            return res.first->value;
+            auto res = insert(key);
+            return res.first->key;
         }
 
         std::pair<Node*, bool> insert(const K& key)
@@ -1121,7 +1121,6 @@ namespace itl
             if (_child(search_ptrs.first, LEFT) && _child(search_ptrs.first, RIGHT))
             {
                 Node* successor = _inorder_successor(search_ptrs.first);
-                search_ptrs.first->value = successor->value;
                 search_ptrs.first->key = successor->key;
                 search_ptrs.first = successor;
                 search_ptrs.second = successor->parent;
