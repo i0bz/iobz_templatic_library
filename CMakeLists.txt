@@ -25,10 +25,6 @@ target_sources(i0bz_templatic_library
                     src/itl-unordered_set.cppm
                     src/itl-constants.cppm)
 
-add_executable(test2 test.cpp)
-
-target_link_libraries(test2 PRIVATE i0bz_templatic_library)
-
 
 include(CTest)
 enable_testing()
