@@ -143,7 +143,7 @@ namespace itl
             std::ranges::for_each(init, [this](const T& x) { push_back(x); });
         }
         
-        list(const list& other)
+        list(list& other)
         {
             for (auto&& x : other)
             {
