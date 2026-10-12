@@ -4,6 +4,7 @@ export import :list;
 export import :map;
 export import :set;
 export import :unordered_map;
+export import :unordered_set;
 
 
 export namespace itl

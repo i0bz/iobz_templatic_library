@@ -58,6 +58,21 @@ namespace itl
         }
 
 
+        T operator[](std::size_t index)
+        {
+            if (index >= size()) throw std::out_of_range(OOB_ERR.data());
+
+            auto usage = size();
+            auto iterator = begin();
+            for (std::size_t i = 0; i < index; i++)
+            {
+                ++iterator;
+            }
+
+            return *iterator;
+        }
+
+
 
         //iterators
         rbtree<T, T, true>::iterator begin()

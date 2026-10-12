@@ -21,7 +21,6 @@ namespace itl
         std::size_t usage{};
 
 
-
     public:
 
         unordered_map() : buckets(new rbtree<K,V>[N]) {}
