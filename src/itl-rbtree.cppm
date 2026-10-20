@@ -623,7 +623,7 @@ namespace itl
             Node* parent{};
             Color col{RED};
 
-            Node(K ky, Node* pr) : key(ky), parent(pr) {}
+            Node(K ky, Node* pr) : key(ky), parent(pr), children(nullptr, nullptr) {}
         };
 
         Node* root{};
