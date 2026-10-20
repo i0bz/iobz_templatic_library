@@ -48,7 +48,7 @@ namespace itl
             Node* parent{};
             Color col{RED};
 
-            Node(K ky, T vl, Node* pr) : key(ky), value(vl), parent(pr) {}
+            Node(K ky, T vl, Node* pr) : key(ky), value(vl), parent(pr), children(nullptr, nullptr) {}
         };
 
         Node* root{};

@@ -50,20 +50,20 @@ namespace itl
         bool insert(const T& key)
         {
             usage++;
-            return buckets[hasher(key)].insert(key).second;
+            return buckets[hasher(key) % N].insert(key).second;
         }
 
         bool erase(const T& key)
         {
             usage--;
-            return buckets[hasher(key)].erase(key);
+            return buckets[hasher(key) % N].erase(key);
         }
 
         T& contains(const T& key)
         {
             try
             {
-                buckets[hasher(key)].at(key);
+                buckets[hasher(key) % N].at(key);
                 return true;
             }
             catch(const std::out_of_range& e)

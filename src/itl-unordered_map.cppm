@@ -42,22 +42,22 @@ namespace itl
 
         bool insert(const K& key, const V& value)
         {
-            return buckets[hasher(key)].insert(key,value).second;
+            return buckets[hasher(key) % N].insert(key,value).second;
         }
 
         bool erase(const K& key)
         {
-            return buckets[hasher(key)].erase(key);
+            return buckets[hasher(key) % N].erase(key);
         }
 
         V& at(const K& key)
         {
-            return buckets[hasher(key)].at(key);
+            return buckets[hasher(key) % N].at(key);
         }
 
         V& operator[](const K& key)
         {
-            return buckets[hasher(key)][key];
+            return buckets[hasher(key) % N][key];
         }
 
 
